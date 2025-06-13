@@ -1,0 +1,31 @@
+@model List<Car>
+
+<h2>Your Cars</h2>
+
+<table class="table">
+    <tr>
+        <th>Make</th><th>Model</th><th>Year</th><th>Plate</th>
+        <th>Owner</th>
+        <th></th>
+    </tr>
+@foreach (var car in Model)
+{
+    <tr>
+        <td>@car.Make</td>
+        <td>@car.Model</td>
+        <td>@car.Year</td>
+        <td>@car.PlateNumber</td>
+        <td>@car.Owner?.UserName</td>
+        <td>
+            @if (User.IsInRole("Admin"))
+            {
+                <form asp-action="Delete" asp-route-id="@car.Id" method="post">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+            }
+        </td>
+    </tr>
+}
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Add Car</a>
