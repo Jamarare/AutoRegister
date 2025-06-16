@@ -37,7 +37,10 @@ public class CarController : Controller
         return View(cars);
     }
 
-    public IActionResult Create() => View();
+    public IActionResult Create()
+    {
+        return View();
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -49,10 +52,19 @@ public class CarController : Controller
             car.OwnerId = user.Id;
 
             _context.Cars.Add(car);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Andmebaasi salvestamisel tekkis viga: " + ex.Message);
+                return View(car);
+            }
 
             return RedirectToAction(nameof(Index));
         }
+
         return View(car);
     }
 
