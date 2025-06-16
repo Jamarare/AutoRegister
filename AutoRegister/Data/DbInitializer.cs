@@ -4,27 +4,32 @@ public static class DbInitializer
 {
     public static async Task SeedRolesAndAdmin(IServiceProvider serviceProvider)
     {
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
         string[] roles = { "Admin", "User" };
+
         foreach (var role in roles)
+        {
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
+        }
 
-        var adminEmail = "admin@auto.ee";
-        var admin = await userManager.FindByEmailAsync(adminEmail);
-        if (admin == null)
+        var adminEmail = "admin@gmail.com";
+        var adminPassword = "Admin123!";
+
+        if (await userManager.FindByEmailAsync(adminEmail) == null)
         {
-            var user = new ApplicationUser
+            var admin = new ApplicationUser
             {
                 UserName = adminEmail,
                 Email = adminEmail,
-                FullName = "Admin"
+                EmailConfirmed = true
             };
-            var result = await userManager.CreateAsync(user, "Admin123!");
+
+            var result = await userManager.CreateAsync(admin, adminPassword);
             if (result.Succeeded)
-                await userManager.AddToRoleAsync(user, "Admin");
+                await userManager.AddToRoleAsync(admin, "Admin");
         }
     }
 }
