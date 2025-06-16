@@ -14,7 +14,7 @@ public class Car
     public int Year { get; set; }
 
     [Required]
-    public string PlateNumber { get; set; }
+    public string LicensePlate { get; set; }
 
     [ForeignKey("Owner")]
     public string OwnerId { get; set; }
