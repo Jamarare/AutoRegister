@@ -1,0 +1,48 @@
+﻿@model IEnumerable<AutoRegister.Models.Car>
+
+
+@{
+    ViewData["Title"] = "Cars List";
+}
+
+<h2>Cars</h2>
+
+<form method="get" asp-action="Search" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="searchString"
+               value="@Context.Request.Query["searchString"]"
+               class="form-control" placeholder="Search by Make or Model" />
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a asp-action="Search" class="btn btn-secondary ms-2">Clear</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>License Plate</th>
+            <th>Owner</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var car in Model)
+        {
+            <tr>
+                <td>@car.Make</td>
+                <td>@car.Model</td>
+                <td>@car.Year</td>
+                <td>@car.LicensePlate</td>
+                <td>@car.Owner?.UserName</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@car.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@car.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@car.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

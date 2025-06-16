@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using AutoRegister.Models;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {

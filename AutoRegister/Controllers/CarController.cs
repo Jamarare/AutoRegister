@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
+using AutoRegister.Models;
 
 [Authorize]
 public class CarController : Controller
@@ -17,14 +18,21 @@ public class CarController : Controller
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
         var user = await _userManager.GetUserAsync(User);
         var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
 
+        var carsQuery = _context.Cars.AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            carsQuery = carsQuery.Where(c => c.Make.Contains(searchString) || c.Model.Contains(searchString));
+        }
+
         var cars = isAdmin
-            ? await _context.Cars.Include(c => c.Owner).ToListAsync()
-            : await _context.Cars.Where(c => c.OwnerId == user.Id).ToListAsync();
+            ? await carsQuery.Include(c => c.Owner).ToListAsync()
+            : await carsQuery.Where(c => c.OwnerId == user.Id).ToListAsync();
 
         return View(cars);
     }
@@ -35,16 +43,16 @@ public class CarController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Car car)
     {
-        var user = await _userManager.GetUserAsync(User);
-        car.OwnerId = user.Id;
-
         if (ModelState.IsValid)
         {
+            var user = await _userManager.GetUserAsync(User);
+            car.OwnerId = user.Id;
+
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
-
         return View(car);
     }
 
@@ -139,4 +147,29 @@ public class CarController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    public async Task<IActionResult> Search(string searchString)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+        var query = _context.Cars.AsQueryable();
+
+        if (!isAdmin)
+        {
+            query = query.Where(c => c.OwnerId == user.Id);
+        }
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            query = query.Where(c =>
+                c.Make.Contains(searchString) ||
+                c.Model.Contains(searchString));
+        }
+
+        var cars = await query.Include(c => c.Owner).ToListAsync();
+
+        return View(cars);
+    }
 }
+

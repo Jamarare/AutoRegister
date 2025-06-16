@@ -1,23 +1,41 @@
 @model Car
 
-<h2>Add Car</h2>
+@{
+    ViewData["Title"] = "Create Car";
+}
+
+<h2>Create Car</h2>
 
 <form asp-action="Create" method="post">
-    <div class="form-group">
-        <label>Make</label>
+    @Html.AntiForgeryToken()
+    <div class="form-group mb-3">
+        <label asp-for="Make" class="form-label"></label>
         <input asp-for="Make" class="form-control" />
+        <span asp-validation-for="Make" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Model</label>
+
+    <div class="form-group mb-3">
+        <label asp-for="Model" class="form-label"></label>
         <input asp-for="Model" class="form-control" />
+        <span asp-validation-for="Model" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Year</label>
-        <input asp-for="Year" class="form-control" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Year" class="form-label"></label>
+        <input asp-for="Year" class="form-control" type="number" min="1900" max="2100" />
+        <span asp-validation-for="Year" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Plate Number</label>
+
+    <div class="form-group mb-3">
+        <label asp-for="LicensePlate" class="form-label"></label>
         <input asp-for="LicensePlate" class="form-control" />
+        <span asp-validation-for="LicensePlate" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-success">Save</button>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

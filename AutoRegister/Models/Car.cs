@@ -1,22 +1,24 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-public class Car
+namespace AutoRegister.Models
 {
-    public int Id { get; set; }
+    public class Car
+    {
+        public int Id { get; set; }
 
-    [Required]
-    public string Make { get; set; }
+        [Required(ErrorMessage = "Make on kohustuslik")]
+        public string Make { get; set; }
 
-    [Required]
-    public string Model { get; set; }
+        [Required(ErrorMessage = "Model on kohustuslik")]
+        public string Model { get; set; }
 
-    public int Year { get; set; }
+        [Range(1900, 2100, ErrorMessage = "Year peab olema vahemikus 1900 kuni 2100")]
+        public int Year { get; set; }
 
-    [Required]
-    public string LicensePlate { get; set; }
+        [Required(ErrorMessage = "LicensePlate on kohustuslik")]
+        public string LicensePlate { get; set; }
 
-    [ForeignKey("Owner")]
-    public string OwnerId { get; set; }
-    public ApplicationUser Owner { get; set; }
+        public string OwnerId { get; set; }
+        public ApplicationUser Owner { get; set; }
+    }
 }
